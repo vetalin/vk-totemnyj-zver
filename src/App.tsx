@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ConfigProvider, AppRoot, View, Panel, PanelHeader, SplitLayout } from '@vkontakte/vkui';
+import { ConfigProvider, AppRoot, View, Panel, PanelHeader, SplitLayout, SplitCol } from '@vkontakte/vkui';
 import { StartScreen } from './components/StartScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';
@@ -39,35 +39,37 @@ function App() {
   const result = answers.length > 0 ? calculateResult(answers) : null;
 
   return (
-    <ConfigProvider>
+    <ConfigProvider colorScheme="dark">
       <AppRoot>
         <SplitLayout>
-          <View activePanel={screen}>
-            <Panel id="start">
-              <PanelHeader>Твой тотемный зверь</PanelHeader>
-              <StartScreen onStart={handleStart} />
-            </Panel>
-            
-            <Panel id="quiz">
-              <PanelHeader>Тест</PanelHeader>
-              <QuizScreen
-                question={questions[currentQuestion]}
-                currentIndex={currentQuestion}
-                totalQuestions={questions.length}
-                onAnswer={handleAnswer}
-              />
-            </Panel>
-            
-            <Panel id="result">
-              <PanelHeader>Результат</PanelHeader>
-              {result && (
-                <ResultScreen
-                  animal={result}
-                  onRestart={handleRestart}
+          <SplitCol>
+            <View activePanel={screen}>
+              <Panel id="start">
+                <PanelHeader>Твой тотемный зверь</PanelHeader>
+                <StartScreen onStart={handleStart} />
+              </Panel>
+
+              <Panel id="quiz">
+                <PanelHeader>Тест</PanelHeader>
+                <QuizScreen
+                  question={questions[currentQuestion]}
+                  currentIndex={currentQuestion}
+                  totalQuestions={questions.length}
+                  onAnswer={handleAnswer}
                 />
-              )}
-            </Panel>
-          </View>
+              </Panel>
+
+              <Panel id="result">
+                <PanelHeader>Результат</PanelHeader>
+                {result && (
+                  <ResultScreen
+                    animal={result}
+                    onRestart={handleRestart}
+                  />
+                )}
+              </Panel>
+            </View>
+          </SplitCol>
         </SplitLayout>
       </AppRoot>
     </ConfigProvider>

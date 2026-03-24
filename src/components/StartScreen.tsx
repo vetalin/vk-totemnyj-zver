@@ -1,5 +1,4 @@
 import { Button, Card, CardGrid, Headline, Text, Title } from '@vkontakte/vkui';
-import '@vkontakte/vkui/dist/vkui.css';
 
 interface StartScreenProps {
   onStart: () => void;
