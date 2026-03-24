@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConfigProvider, AppRoot, View, Panel, PanelHeader, SplitLayout, SplitCol } from '@vkontakte/vkui';
+import bridge from '@vkontakte/vk-bridge';
 import { StartScreen } from './components/StartScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';
-import { questions, calculateResult } from './data/quiz';
+import { questions, calculateResult, getRank } from './data/quiz';
 import type { ElementType } from './types';
 
 type Screen = 'start' | 'quiz' | 'result';
@@ -12,6 +13,21 @@ function App() {
   const [screen, setScreen] = useState<Screen>('start');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<ElementType[]>([]);
+  const [appearance, setAppearance] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const getConfig = async () => {
+      try {
+        const data = await bridge.send('VKWebAppGetConfig') as { appearance?: 'light' | 'dark' };
+        if (data.appearance) {
+          setAppearance(data.appearance);
+        }
+      } catch (e) {
+        // Use default dark theme
+      }
+    };
+    getConfig();
+  }, []);
 
   const handleStart = () => {
     setScreen('quiz');
@@ -37,9 +53,10 @@ function App() {
   };
 
   const result = answers.length > 0 ? calculateResult(answers) : null;
+  const rank = answers.length > 0 ? getRank(answers) : null;
 
   return (
-    <ConfigProvider colorScheme="dark">
+    <ConfigProvider colorScheme={appearance}>
       <AppRoot>
         <SplitLayout>
           <SplitCol>
@@ -55,18 +72,21 @@ function App() {
                   question={questions[currentQuestion]}
                   currentIndex={currentQuestion}
                   totalQuestions={questions.length}
+                  lastElement={answers.length > 0 ? answers[answers.length - 1] : undefined}
                   onAnswer={handleAnswer}
                 />
               </Panel>
 
               <Panel id="result">
                 <PanelHeader>Результат</PanelHeader>
-                {result && (
+                {result !== null && rank !== null ? (
                   <ResultScreen
                     animal={result}
+                    rank={rank}
+                    answers={answers}
                     onRestart={handleRestart}
                   />
-                )}
+                ) : null}
               </Panel>
             </View>
           </SplitCol>

@@ -1,19 +1,42 @@
+import { useState, useEffect } from 'react';
 import { Button, Card, Title, Text, CardGrid, Separator } from '@vkontakte/vkui';
-import type { TotemAnimal } from '../types';
+import bridge from '@vkontakte/vk-bridge';
+import type { TotemAnimal, ElementType, Rank } from '../types';
 
 interface ResultScreenProps {
   animal: TotemAnimal;
+  rank: Rank;
+  answers: ElementType[];
   onRestart: () => void;
 }
 
-export function ResultScreen({ animal, onRestart }: ResultScreenProps) {
+type RevealPhase = 'countdown' | 'revealed';
+
+export function ResultScreen({ animal, rank, onRestart }: ResultScreenProps) {
+  const [revealPhase, setRevealPhase] = useState<RevealPhase>('countdown');
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 600);
+      return () => clearTimeout(timer);
+    } else if (revealPhase === 'countdown') {
+      setRevealPhase('revealed');
+      try {
+        bridge.send('VKWebAppFlashSetLevel', { level: 2 });
+      } catch (e) {
+        // Haptic not available
+      }
+    }
+  }, [countdown, revealPhase]);
+
   const handleShare = async () => {
     try {
-      // @ts-ignore - VK API
-      if (window.VK && window.VK.Share) {
-        // @ts-ignore
-        window.VK.Share.click();
-      }
+      await bridge.send('VKWebAppShare', {
+        link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || 54498046}`,
+      });
     } catch (e) {
       console.log('Share not available');
     }
@@ -27,41 +50,74 @@ export function ResultScreen({ animal, onRestart }: ResultScreenProps) {
       
       <Separator style={{ margin: '16px 0' }} />
       
-      <div style={{ fontSize: '96px', marginBottom: '16px' }}>
-        {animal.emoji}
-      </div>
-      
-      <Title level="2" style={{ marginBottom: '16px' }}>
-        {animal.name}
-      </Title>
-
-      <CardGrid style={{ marginBottom: '24px' }}>
-        <Card style={{ padding: '16px' }}>
-          <Text>
-            {animal.description}
+      {revealPhase === 'countdown' ? (
+        <div 
+          key={countdown}
+          className="animate-countdownPulse"
+          style={{ 
+            fontSize: '120px', 
+            fontWeight: 'bold',
+            color: 'var(--vkui--color_text_accent)',
+            height: '200px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {countdown || '🐾'}
+        </div>
+      ) : (
+        <>
+          <div 
+            className="animate-scaleIn"
+            style={{ fontSize: '96px', marginBottom: '16px' }}
+          >
+            {animal.emoji}
+          </div>
+          
+          <Title level="2" style={{ marginBottom: '8px' }}>
+            {animal.name}
+          </Title>
+          
+          <Text 
+            style={{ 
+              display: 'block', 
+              marginBottom: '16px',
+              color: 'var(--vkui--color_text_accent)'
+            }}
+          >
+            {rank.rank} • {rank.subtitle}
           </Text>
-        </Card>
-      </CardGrid>
 
-      <CardGrid>
-        <Button
-          size="l"
-          stretched
-          mode="secondary"
-          onClick={handleShare}
-        >
-          Поделиться результатом
-        </Button>
-        
-        <Button
-          size="l"
-          stretched
-          mode="primary"
-          onClick={onRestart}
-        >
-          Пройти снова
-        </Button>
-      </CardGrid>
+          <CardGrid style={{ marginBottom: '24px' }}>
+            <Card style={{ padding: '16px' }}>
+              <Text>
+                {animal.description}
+              </Text>
+            </Card>
+          </CardGrid>
+
+          <CardGrid>
+            <Button
+              size="l"
+              stretched
+              mode="secondary"
+              onClick={handleShare}
+            >
+              Поделиться результатом
+            </Button>
+            
+            <Button
+              size="l"
+              stretched
+              mode="primary"
+              onClick={onRestart}
+            >
+              Пройти снова
+            </Button>
+          </CardGrid>
+        </>
+      )}
     </div>
   );
 }

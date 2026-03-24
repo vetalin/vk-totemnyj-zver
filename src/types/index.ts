@@ -22,3 +22,8 @@ export interface QuizState {
   currentQuestion: number;
   answers: ElementType[];
 }
+
+export interface Rank {
+  rank: string;
+  subtitle: string;
+}

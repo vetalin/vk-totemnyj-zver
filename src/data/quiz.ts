@@ -1,4 +1,4 @@
-import type { Question, TotemAnimal, ElementType } from '../types';
+import type { Question, TotemAnimal, ElementType, Rank } from '../types';
 
 export const questions: Question[] = [
   {
@@ -97,4 +97,22 @@ export function calculateResult(answers: ElementType[]): TotemAnimal {
   )[0] as ElementType;
 
   return totemAnimals[maxElement];
+}
+
+export function getRank(answers: ElementType[]): Rank {
+  const counts = answers.reduce<Record<ElementType, number>>(
+    (acc, answer) => {
+      acc[answer] = (acc[answer] || 0) + 1;
+      return acc;
+    },
+    { fire: 0, earth: 0, air: 0, water: 0 }
+  );
+
+  const dominantCount = Math.max(...Object.values(counts));
+  const ratio = dominantCount / answers.length;
+
+  if (ratio >= 0.8) return { rank: 'Чистый', subtitle: 'Всё совпало!' };
+  if (ratio >= 0.6) return { rank: 'Вожак', subtitle: 'Ярко выраженный тип' };
+  if (ratio >= 0.4) return { rank: 'Искатель', subtitle: 'Есть разносторонность' };
+  return { rank: 'Душа-хамелеон', subtitle: 'Ты — редкий тип!' };
 }
