@@ -5,8 +5,8 @@ import '@vkontakte/vkui/dist/vkui.css';
 import './index.css';
 
 // Initialize VK Bridge
-import vkBridge from '@vkontakte/vk-bridge';
-vkBridge.send('VKWebAppInit', {});
+import * as vkBridge from '@vkontakte/vk-bridge';
+vkBridge.default.send('VKWebAppInit', {});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
