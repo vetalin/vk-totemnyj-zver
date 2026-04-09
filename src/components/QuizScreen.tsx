@@ -26,7 +26,7 @@ const ELEMENT_COLORS: Record<ElementType, string> = {
 
 const ELEMENT_BACKGROUNDS: Record<ElementType, string> = {
   fire: 'rgba(255, 107, 53, 0.12)',
-  earth: ['rgba(86, 171, 47, 0.12)'][0],
+  earth: 'rgba(86, 171, 47, 0.12)',
   air: 'rgba(71, 118, 230, 0.12)',
   water: 'rgba(0, 153, 247, 0.12)',
 };
@@ -83,7 +83,7 @@ export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer }:
         style={{
           textAlign: 'center',
           display: 'block',
-          marginBottom: '12px',
+          marginBottom: '8px',
           opacity: 0.5,
           fontSize: '13px',
           fontWeight: '600',
@@ -99,7 +99,7 @@ export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer }:
         level="2"
         style={{
           textAlign: 'center',
-          marginBottom: '28px',
+          marginBottom: question.subtitle ? '8px' : '28px',
           display: 'block',
           fontSize: '20px',
           fontWeight: '700',
@@ -109,6 +109,22 @@ export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer }:
       >
         {question.text}
       </Title>
+
+      {/* Subtitle */}
+      {question.subtitle && (
+        <Text
+          style={{
+            textAlign: 'center',
+            display: 'block',
+            marginBottom: '24px',
+            opacity: 0.4,
+            fontSize: '13px',
+            fontStyle: 'italic',
+          }}
+        >
+          {question.subtitle}
+        </Text>
+      )}
 
       {/* Answers */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

@@ -92,6 +92,11 @@ body {
   to { width: var(--target-width); }
 }
 
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
 /* ===== ANIMATION CLASSES ===== */
 
 .animate-pulse {
@@ -224,7 +229,7 @@ body {
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .result-trait-chip {
@@ -313,4 +318,46 @@ body {
   height: 100%;
   border-radius: 3px;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+}
+
+/* ===== COMPATIBILITY SCREEN ===== */
+
+.compat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.compat-animal-btn {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compat-animal-btn:active {
+  transform: scale(0.95);
+}
+
+.compat-bar-fill {
+  transition: width 0.8s ease;
+}
+
+/* ===== EXTENDED PROFILE ===== */
+
+.profile-section {
+  padding: 16px 18px;
+  background: rgba(128,128,128,0.08);
+  border-radius: 16px;
+}
+
+.profile-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* ===== UNLOCK CARD ===== */
+
+.unlock-card:active {
+  transform: scale(0.98);
 }

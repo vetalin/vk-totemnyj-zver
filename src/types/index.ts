@@ -24,6 +24,15 @@ export interface TotemAnimal {
   traits: string[];
   colors: [string, string]; // gradient from, to
   rarity: 'common' | 'rare' | 'legendary';
+  // Extended profile (unlockable)
+  strengths: string;
+  weaknesses: string;
+  motto: string;
+  compatibility: {
+    best: AnimalId;
+    good: AnimalId;
+    challenge: AnimalId;
+  };
 }
 
 export interface QuizState {

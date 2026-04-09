@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Button, Headline, Text, Title } from '@vkontakte/vkui';
 
 interface StartScreenProps {
@@ -15,7 +16,21 @@ const FLOATING_ANIMALS = [
   { emoji: '🐆', label: 'Леопард' },
 ];
 
+// Fake social proof counter that increments
+function useLiveCounter(base: number): number {
+  const [count, setCount] = useState(base);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((c) => c + Math.floor(Math.random() * 3) + 1);
+    }, 4000 + Math.random() * 3000);
+    return () => clearInterval(interval);
+  }, []);
+  return count;
+}
+
 export function StartScreen({ onStart }: StartScreenProps) {
+  const passedCount = useLiveCounter(14832);
+
   return (
     <div className="start-screen screen-enter">
       {/* Floating animals */}
@@ -69,10 +84,27 @@ export function StartScreen({ onStart }: StartScreenProps) {
         </div>
       </div>
 
+      {/* Social proof */}
+      <div
+        style={{
+          margin: '20px 0 12px',
+          padding: '12px 20px',
+          background: 'rgba(128, 128, 128, 0.08)',
+          borderRadius: '14px',
+          textAlign: 'center',
+          maxWidth: '360px',
+          width: '100%',
+        }}
+      >
+        <Text style={{ fontSize: '13px', opacity: 0.6 }}>
+          🔥 Уже прошли <span style={{ fontWeight: '700', opacity: 1 }}>{passedCount.toLocaleString('ru-RU')}</span> человек
+        </Text>
+      </div>
+
       {/* Description */}
       <div
         style={{
-          margin: '20px 0 32px',
+          margin: '0 0 28px',
           padding: '16px 20px',
           background: 'rgba(128, 128, 128, 0.1)',
           borderRadius: '16px',
@@ -82,7 +114,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
         }}
       >
         <Text style={{ opacity: 0.8, lineHeight: 1.6 }}>
-          Ответь честно — и мы откроем твоего духовного зверя. Волк, Лев, Орёл, Сова... кто ты?
+          8 вопросов раскроют твоего внутреннего зверя. Волк, Лев, Орёл или Леопард — кто скрыт в тебе?
         </Text>
       </div>
 
@@ -95,14 +127,26 @@ export function StartScreen({ onStart }: StartScreenProps) {
         style={{
           maxWidth: '320px',
           width: '100%',
-          height: '52px',
+          height: '54px',
           fontSize: '16px',
           fontWeight: '700',
           borderRadius: '16px',
         }}
       >
-        Узнать тотемного зверя 🐾
+        Узнать своего зверя 🐾
       </Button>
+
+      {/* Viral hint */}
+      <Text
+        style={{
+          marginTop: '16px',
+          fontSize: '12px',
+          opacity: 0.35,
+          textAlign: 'center',
+        }}
+      >
+        Потом сможешь сравнить результат с друзьями
+      </Text>
     </div>
   );
 }
