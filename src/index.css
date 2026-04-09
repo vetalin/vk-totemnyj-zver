@@ -15,7 +15,8 @@ body {
   min-height: 100vh;
 }
 
-/* Animations */
+/* ===== KEYFRAMES ===== */
+
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.2); opacity: 0.7; }
@@ -27,9 +28,21 @@ body {
   to { opacity: 1; }
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.8); }
+  from { opacity: 0; transform: scale(0.6); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scaleInBounce {
+  0% { opacity: 0; transform: scale(0.3); }
+  60% { transform: scale(1.15); }
+  80% { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes countdownPulse {
@@ -39,6 +52,48 @@ body {
   100% { transform: scale(0.9); opacity: 0; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes floatRotate {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(255, 107, 53, 0.8); }
+}
+
+@keyframes traitAppear {
+  from { opacity: 0; transform: scale(0.8) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
 .animate-pulse {
   animation: pulse 600ms ease-in-out;
 }
@@ -47,10 +102,215 @@ body {
   animation: fadeIn 400ms ease-out forwards;
 }
 
+.animate-fadeInUp {
+  animation: fadeInUp 500ms ease-out forwards;
+}
+
 .animate-scaleIn {
-  animation: scaleIn 500ms ease-out forwards;
+  animation: scaleIn 400ms ease-out forwards;
+}
+
+.animate-scaleInBounce {
+  animation: scaleInBounce 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-countdownPulse {
   animation: countdownPulse 600ms ease-in-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-floatRotate {
+  animation: floatRotate 4s ease-in-out infinite;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 400ms ease-out forwards;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 400ms ease-out forwards;
+}
+
+/* ===== QUIZ ANSWER CARDS ===== */
+
+.quiz-answer-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.quiz-answer-card:hover {
+  transform: translateY(-2px);
+}
+
+.quiz-answer-card:active {
+  transform: scale(0.97);
+}
+
+/* ===== START SCREEN ===== */
+
+.start-screen {
+  min-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-animals-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.start-animal-item {
+  font-size: 44px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.start-animal-item:nth-child(1) { animation: float 3.2s ease-in-out infinite; }
+.start-animal-item:nth-child(2) { animation: float 2.8s ease-in-out infinite 0.4s; }
+.start-animal-item:nth-child(3) { animation: float 3.5s ease-in-out infinite 0.8s; }
+.start-animal-item:nth-child(4) { animation: floatRotate 3.0s ease-in-out infinite 0.2s; }
+
+.start-stats {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.start-stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(128, 128, 128, 0.15);
+  backdrop-filter: blur(8px);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ===== RESULT SCREEN ===== */
+
+.result-animal-card {
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.result-animal-bg {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.result-traits-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.result-trait-chip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.result-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.result-rarity-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== GLOBAL RATING ===== */
+
+.rating-bar-container {
+  height: 8px;
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.rating-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+
+/* ===== SHIMMER GRADIENT TEXT ===== */
+
+.gradient-text {
+  background: linear-gradient(90deg, #FF6B35, #FFD700, #FF6B35);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ===== TRANSITIONS ===== */
+
+.screen-enter {
+  animation: fadeInUp 350ms ease-out forwards;
+}
+
+/* ===== PROGRESS BAR ===== */
+
+.quiz-progress-wrapper {
+  position: relative;
+  height: 6px;
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
 }

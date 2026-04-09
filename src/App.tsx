@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfigProvider, AppRoot, View, Panel, PanelHeader, SplitLayout, SplitCol } from '@vkontakte/vkui';
-import bridge from '@vkontakte/vk-bridge';
+import bridge from './bridge';
 import { StartScreen } from './components/StartScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';
@@ -30,9 +30,9 @@ function App() {
   }, []);
 
   const handleStart = () => {
-    setScreen('quiz');
     setCurrentQuestion(0);
     setAnswers([]);
+    setScreen('quiz');
   };
 
   const handleAnswer = (element: ElementType) => {
@@ -55,6 +55,12 @@ function App() {
   const result = answers.length > 0 ? calculateResult(answers) : null;
   const rank = answers.length > 0 ? getRank(answers) : null;
 
+  const PANEL_TITLES: Record<Screen, string> = {
+    start: 'Твой тотемный зверь',
+    quiz: `Вопрос ${currentQuestion + 1} из ${questions.length}`,
+    result: 'Результат',
+  };
+
   return (
     <ConfigProvider colorScheme={appearance}>
       <AppRoot>
@@ -62,23 +68,22 @@ function App() {
           <SplitCol>
             <View activePanel={screen}>
               <Panel id="start">
-                <PanelHeader>Твой тотемный зверь</PanelHeader>
+                <PanelHeader>{PANEL_TITLES.start}</PanelHeader>
                 <StartScreen onStart={handleStart} />
               </Panel>
 
               <Panel id="quiz">
-                <PanelHeader>Тест</PanelHeader>
+                <PanelHeader>{PANEL_TITLES.quiz}</PanelHeader>
                 <QuizScreen
                   question={questions[currentQuestion]}
                   currentIndex={currentQuestion}
                   totalQuestions={questions.length}
-                  lastElement={answers.length > 0 ? answers[answers.length - 1] : undefined}
                   onAnswer={handleAnswer}
                 />
               </Panel>
 
               <Panel id="result">
-                <PanelHeader>Результат</PanelHeader>
+                <PanelHeader>Твой тотем 🐾</PanelHeader>
                 {result !== null && rank !== null ? (
                   <ResultScreen
                     animal={result}

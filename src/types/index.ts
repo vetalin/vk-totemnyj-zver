@@ -1,21 +1,29 @@
 export type ElementType = 'fire' | 'earth' | 'air' | 'water';
 
+export type AnimalId = 'wolf' | 'lion' | 'bear' | 'fox' | 'eagle' | 'owl' | 'dolphin' | 'leopard';
+
 export interface Answer {
   text: string;
   element: ElementType;
+  emoji?: string;
 }
 
 export interface Question {
   id: number;
   text: string;
+  subtitle?: string;
   answers: Answer[];
 }
 
 export interface TotemAnimal {
-  id: string;
+  id: AnimalId;
   name: string;
   emoji: string;
+  element: ElementType;
   description: string;
+  traits: string[];
+  colors: [string, string]; // gradient from, to
+  rarity: 'common' | 'rare' | 'legendary';
 }
 
 export interface QuizState {
@@ -26,4 +34,5 @@ export interface QuizState {
 export interface Rank {
   rank: string;
   subtitle: string;
+  icon: string;
 }
