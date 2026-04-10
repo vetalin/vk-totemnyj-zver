@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ConfigProvider, AppRoot, View, Panel, PanelHeader, SplitLayout, SplitCol } from '@vkontakte/vkui';
-import bridge from './bridge';
+import bridge from '@vkontakte/vk-bridge';
 import { StartScreen } from './components/StartScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';

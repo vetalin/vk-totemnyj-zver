@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Text, Title } from '@vkontakte/vkui';
-import bridge from '../bridge';
+import bridge from '@vkontakte/vk-bridge';
 import type { TotemAnimal, ElementType, Rank } from '../types';
 import { globalDistribution, totemAnimals } from '../data/quiz';
 

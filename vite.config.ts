@@ -9,4 +9,9 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
   },
+  resolve: {
+    alias: {
+      '@vkontakte/vk-bridge': '@vkontakte/vk-bridge/dist/index.es.js',
+    },
+  },
 })

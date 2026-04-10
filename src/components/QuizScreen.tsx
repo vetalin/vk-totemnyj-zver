@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Text, Title } from '@vkontakte/vkui';
-import bridge from '../bridge';
+import bridge from '@vkontakte/vk-bridge';
 import type { Question, ElementType } from '../types';
 
 interface QuizScreenProps {
