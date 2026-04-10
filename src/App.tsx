@@ -17,6 +17,7 @@ function App() {
   const [answers, setAnswers] = useState<ElementType[]>([]);
   const [appearance, setAppearance] = useState<'light' | 'dark'>('dark');
   const [extendedUnlocked, setExtendedUnlocked] = useState(false);
+  const [resultRevealed, setResultRevealed] = useState(false);
 
   useEffect(() => {
     const getConfig = async () => {
@@ -36,6 +37,7 @@ function App() {
     setCurrentQuestion(0);
     setAnswers([]);
     setExtendedUnlocked(false);
+    setResultRevealed(false);
     setScreen('quiz');
   };
 
@@ -55,6 +57,7 @@ function App() {
     setCurrentQuestion(0);
     setAnswers([]);
     setExtendedUnlocked(false);
+    setResultRevealed(false);
   };
 
   const handleShowCompatibility = () => {
@@ -117,6 +120,8 @@ function App() {
                     onShowExtended={handleShowExtended}
                     extendedUnlocked={extendedUnlocked}
                     onUnlockExtended={handleUnlockExtended}
+                    resultRevealed={resultRevealed}
+                    onResultRevealed={() => setResultRevealed(true)}
                   />
                 ) : null}
               </Panel>

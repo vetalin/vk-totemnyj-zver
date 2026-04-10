@@ -13,6 +13,8 @@ interface ResultScreenProps {
   onShowExtended: () => void;
   extendedUnlocked: boolean;
   onUnlockExtended: () => void;
+  resultRevealed: boolean;
+  onResultRevealed: () => void;
 }
 
 type Phase = 'countdown' | 'revealed';
@@ -37,12 +39,15 @@ export function ResultScreen({
   onShowExtended,
   extendedUnlocked,
   onUnlockExtended,
+  resultRevealed,
+  onResultRevealed,
 }: ResultScreenProps) {
-  const [phase, setPhase] = useState<Phase>('countdown');
-  const [countdown, setCountdown] = useState(3);
-  const [showRating, setShowRating] = useState(false);
-  const [traitsVisible, setTraitsVisible] = useState<boolean[]>([false, false, false]);
+  const [phase, setPhase] = useState<Phase>(resultRevealed ? 'revealed' : 'countdown');
+  const [countdown, setCountdown] = useState(resultRevealed ? 0 : 3);
+  const [showRating, setShowRating] = useState(resultRevealed);
+  const [traitsVisible, setTraitsVisible] = useState<boolean[]>(resultRevealed ? [true, true, true] : [false, false, false]);
   const [adWatched, setAdWatched] = useState(extendedUnlocked);
+  const [adError, setAdError] = useState<string | null>(null);
 
   useEffect(() => {
     if (phase !== 'countdown') return;
@@ -52,6 +57,7 @@ export function ResultScreen({
     } else {
       setTimeout(() => {
         setPhase('revealed');
+        onResultRevealed();
         try {
           bridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' });
         } catch (e) {
@@ -130,6 +136,7 @@ export function ResultScreen({
 
   // Rewarded ad for unlocking extended profile
   const handleWatchAd = async () => {
+    setAdError(null);
     try {
       await bridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' } as never);
       setAdWatched(true);
@@ -138,9 +145,15 @@ export function ResultScreen({
         bridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' });
       } catch (_) { /* */ }
     } catch (e) {
-      // Ad not available — unlock for free as fallback
-      setAdWatched(true);
-      onUnlockExtended();
+      const errData = e && typeof e === 'object' && 'error_data' in e
+        ? (e as { error_data: { error_code?: number; error_reason?: string } }).error_data
+        : null;
+      console.error('[Ad Error]', JSON.stringify(errData ?? e));
+      setAdError(
+        errData?.error_reason === 'No ads available'
+          ? 'Реклама сейчас недоступна, попробуй позже'
+          : 'Не удалось загрузить рекламу, попробуй ещё раз',
+      );
     }
   };
 
@@ -285,45 +298,52 @@ export function ResultScreen({
 
           {/* === UNLOCK EXTENDED PROFILE — MONETIZATION === */}
           {!adWatched ? (
-            <button
-              onClick={handleWatchAd}
-              className="unlock-card"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                width: '100%',
-                padding: '14px 18px',
-                background: `linear-gradient(135deg, ${gradFrom}18, ${gradTo}18)`,
-                border: `1.5px dashed ${gradFrom}60`,
-                borderRadius: '16px',
-                cursor: 'pointer',
-                marginBottom: '12px',
-              }}
-            >
-              <span style={{ fontSize: '28px' }}>🔓</span>
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <Text style={{ fontWeight: '700', display: 'block', fontSize: '14px' }}>
-                  Открой полный профиль
-                </Text>
-                <Text style={{ fontSize: '12px', opacity: 0.5, display: 'block' }}>
-                  Сильные стороны, слабости, совместимость
-                </Text>
-              </div>
-              <div
+            <>
+              <button
+                onClick={handleWatchAd}
+                className="unlock-card"
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '12px',
-                  background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})`,
-                  color: 'white',
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  width: '100%',
+                  padding: '14px 18px',
+                  background: `linear-gradient(135deg, ${gradFrom}18, ${gradTo}18)`,
+                  border: `1.5px dashed ${gradFrom}60`,
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  marginBottom: '12px',
                 }}
               >
-                Бесплатно ▶
-              </div>
-            </button>
+                <span style={{ fontSize: '28px' }}>🔓</span>
+                <div style={{ textAlign: 'left', flex: 1 }}>
+                  <Text style={{ fontWeight: '700', display: 'block', fontSize: '14px' }}>
+                    Открой полный профиль
+                  </Text>
+                  <Text style={{ fontSize: '12px', opacity: 0.5, display: 'block' }}>
+                    Сильные стороны, слабости, совместимость
+                  </Text>
+                </div>
+                <div
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '12px',
+                    background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})`,
+                    color: 'white',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Бесплатно ▶
+                </div>
+              </button>
+              {adError && (
+                <Text style={{ fontSize: '12px', color: '#e64646', textAlign: 'center', marginBottom: '12px' }}>
+                  {adError}
+                </Text>
+              )}
+            </>
           ) : (
             <button
               onClick={onShowExtended}
