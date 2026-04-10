@@ -77,19 +77,19 @@ export function ResultScreen({
     try {
       await bridge.send('VKWebAppShowWallPostBox', {
         message: `🐾 Мой тотемный зверь — ${animal.emoji} ${animal.name}!\n\n${animal.description}\n\n${RARITY_LABELS[animal.rarity]} тотем\n${rank.icon} ${rank.rank}\n\n💬 А какой зверь скрыт в тебе? Пройди тест и узнай!\n\n#ТотемныйЗверь #Тотем${animal.name}`,
-        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
+        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`,
       } as never);
     } catch (e) {
       console.log('Wall post not available');
     }
   };
 
-  // Share via VK native share dialog
+  const appLink = `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`;
+
+  // Share via VK native share dialog (user picks: DM, wall, etc.)
   const handleShare = async () => {
     try {
-      await bridge.send('VKWebAppShare', {
-        link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
-      });
+      await bridge.send('VKWebAppShare', { link: appLink });
     } catch (e) {
       console.log('Share not available');
     }

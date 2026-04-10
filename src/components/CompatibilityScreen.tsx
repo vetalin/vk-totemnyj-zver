@@ -39,12 +39,12 @@ export function CompatibilityScreen({ animal, onBack }: CompatibilityScreenProps
     try {
       await bridge.send('VKWebAppShowWallPostBox', {
         message: `🐾 Я — ${animal.emoji} ${animal.name}!\n\n❤️ Мой идеальный тотемный партнёр — ${totemAnimals[animal.compatibility.best].emoji} ${totemAnimals[animal.compatibility.best].name}\n\n🎯 А кто подходит ТЕБЕ? Пройди тест и проверь нашу совместимость!\n\n#ТотемныйЗверь #Совместимость`,
-        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
+        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`,
       } as never);
     } catch (e) {
       try {
         await bridge.send('VKWebAppShare', {
-          link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
+          link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`,
         });
       } catch (_) { /* */ }
     }

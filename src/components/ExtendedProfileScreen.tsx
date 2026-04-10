@@ -34,12 +34,12 @@ export function ExtendedProfileScreen({ animal, rank, onBack }: ExtendedProfileS
     try {
       await bridge.send('VKWebAppShowWallPostBox', {
         message: `🐾 Мой подробный тотемный профиль:\n\n${animal.emoji} ${animal.name}\n${rank.icon} ${rank.rank}\n\n💪 Сильная сторона: ${animal.strengths}\n\n${animal.motto}\n\n❤️ Идеальный партнёр: ${bestMatch.emoji} ${bestMatch.name}\n\n🔮 Узнай свой тотем и сравни!\n\n#ТотемныйЗверь #МойТотем`,
-        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
+        attachments: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`,
       } as never);
     } catch (e) {
       try {
         await bridge.send('VKWebAppShare', {
-          link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54498046'}`,
+          link: `https://vk.com/app${import.meta.env.VITE_VK_APP_ID || '54500031'}`,
         });
       } catch (_) { /* */ }
     }
