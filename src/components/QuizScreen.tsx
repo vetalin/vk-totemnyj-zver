@@ -8,6 +8,7 @@ interface QuizScreenProps {
   currentIndex: number;
   totalQuestions: number;
   onAnswer: (element: ElementType) => void;
+  onGoBack: () => void;
 }
 
 const ELEMENT_GRADIENTS: Record<ElementType, [string, string]> = {
@@ -31,11 +32,21 @@ const ELEMENT_BACKGROUNDS: Record<ElementType, string> = {
   water: 'rgba(0, 153, 247, 0.12)',
 };
 
-export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer }: QuizScreenProps) {
+export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer, onGoBack }: QuizScreenProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
+
+  const handleBack = () => {
+    if (isAnimating || currentIndex === 0) return;
+    try {
+      bridge.send('VKWebAppTapticImpactOccurred', { style: 'light' });
+    } catch {
+      // haptic not available
+    }
+    onGoBack();
+  };
 
   const handleAnswer = (element: ElementType, index: number) => {
     if (isAnimating) return;
@@ -124,6 +135,36 @@ export function QuizScreen({ question, currentIndex, totalQuestions, onAnswer }:
         >
           {question.subtitle}
         </Text>
+      )}
+
+      {/* Back to previous question */}
+      {currentIndex > 0 && (
+        <button
+          type="button"
+          onClick={handleBack}
+          disabled={isAnimating}
+          className="quiz-back-btn"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 14px',
+            marginBottom: '14px',
+            background: 'rgba(128,128,128,0.1)',
+            border: 'none',
+            borderRadius: '12px',
+            cursor: isAnimating ? 'default' : 'pointer',
+            opacity: isAnimating ? 0.4 : 1,
+            fontSize: '13px',
+            fontWeight: '600',
+            color: 'var(--vkui--color_text_secondary)',
+            transition: 'all 0.15s ease',
+          }}
+          aria-label="Вернуться к предыдущему вопросу"
+        >
+          <span style={{ fontSize: '14px', lineHeight: 1 }}>←</span>
+          <span>К предыдущему</span>
+        </button>
       )}
 
       {/* Answers */}

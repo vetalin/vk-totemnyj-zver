@@ -33,6 +33,16 @@ export interface TotemAnimal {
     good: AnimalId;
     challenge: AnimalId;
   };
+  // Pool of daily tips — one is shown per day based on date seed
+  dailyTips: string[];
+}
+
+export interface SavedResult {
+  animalId: AnimalId;
+  rank: string;
+  rankIcon: string;
+  takenAt: number; // timestamp ms
+  answers: ElementType[];
 }
 
 export interface QuizState {

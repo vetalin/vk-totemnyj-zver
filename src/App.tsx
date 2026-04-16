@@ -6,8 +6,9 @@ import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';
 import { CompatibilityScreen } from './components/CompatibilityScreen';
 import { ExtendedProfileScreen } from './components/ExtendedProfileScreen';
-import { questions, calculateResult, getRank } from './data/quiz';
-import type { ElementType } from './types';
+import { questions, calculateResult, getRank, totemAnimals } from './data/quiz';
+import { loadLastResult, saveLastResult } from './utils/storage';
+import type { ElementType, SavedResult } from './types';
 
 type Screen = 'start' | 'quiz' | 'result' | 'compatibility' | 'extended';
 
@@ -18,6 +19,7 @@ function App() {
   const [appearance, setAppearance] = useState<'light' | 'dark'>('dark');
   const [extendedUnlocked, setExtendedUnlocked] = useState(false);
   const [resultRevealed, setResultRevealed] = useState(false);
+  const [lastResult, setLastResult] = useState<SavedResult | null>(null);
 
   useEffect(() => {
     const getConfig = async () => {
@@ -31,6 +33,7 @@ function App() {
       }
     };
     getConfig();
+    loadLastResult().then(setLastResult).catch(() => {});
   }, []);
 
   const handleStart = () => {
@@ -48,8 +51,28 @@ function App() {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
+      const animal = calculateResult(newAnswers);
+      const rank = getRank(newAnswers);
+      const saved: SavedResult = {
+        animalId: animal.id,
+        rank: rank.rank,
+        rankIcon: rank.icon,
+        takenAt: Date.now(),
+        answers: newAnswers,
+      };
+      saveLastResult(saved).catch(() => {});
+      setLastResult(saved);
       setScreen('result');
     }
+  };
+
+  const handleGoBack = () => {
+    if (currentQuestion === 0) {
+      setScreen('start');
+      return;
+    }
+    setAnswers((prev) => prev.slice(0, -1));
+    setCurrentQuestion((i) => i - 1);
   };
 
   const handleRestart = () => {
@@ -76,8 +99,18 @@ function App() {
     setScreen('result');
   };
 
+  const handleViewLastResult = () => {
+    if (!lastResult) return;
+    setAnswers(lastResult.answers);
+    setCurrentQuestion(lastResult.answers.length - 1);
+    setExtendedUnlocked(false);
+    setResultRevealed(true);
+    setScreen('result');
+  };
+
   const result = answers.length > 0 ? calculateResult(answers) : null;
   const rank = answers.length > 0 ? getRank(answers) : null;
+  const lastAnimal = lastResult ? totemAnimals[lastResult.animalId] : null;
 
   const PANEL_TITLES: Record<Screen, string> = {
     start: 'Твой тотемный зверь',
@@ -95,7 +128,12 @@ function App() {
             <View activePanel={screen}>
               <Panel id="start">
                 <PanelHeader>{PANEL_TITLES.start}</PanelHeader>
-                <StartScreen onStart={handleStart} />
+                <StartScreen
+                  onStart={handleStart}
+                  lastResult={lastResult}
+                  lastAnimal={lastAnimal}
+                  onViewLastResult={handleViewLastResult}
+                />
               </Panel>
 
               <Panel id="quiz">
@@ -105,6 +143,7 @@ function App() {
                   currentIndex={currentQuestion}
                   totalQuestions={questions.length}
                   onAnswer={handleAnswer}
+                  onGoBack={handleGoBack}
                 />
               </Panel>
 

@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Button, Headline, Text, Title } from '@vkontakte/vkui';
+import type { SavedResult, TotemAnimal } from '../types';
+import { getDailyTip } from '../data/quiz';
 
 interface StartScreenProps {
   onStart: () => void;
+  lastResult: SavedResult | null;
+  lastAnimal: TotemAnimal | null;
+  onViewLastResult: () => void;
 }
 
 const FLOATING_ANIMALS = [
@@ -28,8 +33,10 @@ function useLiveCounter(base: number): number {
   return count;
 }
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ onStart, lastResult, lastAnimal, onViewLastResult }: StartScreenProps) {
   const passedCount = useLiveCounter(14832);
+  const dailyTip = lastAnimal ? getDailyTip(lastAnimal) : null;
+  const isReturning = Boolean(lastResult && lastAnimal);
 
   return (
     <div className="start-screen screen-enter">
@@ -61,12 +68,71 @@ export function StartScreen({ onStart }: StartScreenProps) {
       {/* Title */}
       <div style={{ textAlign: 'center', marginBottom: '12px', marginTop: '24px' }}>
         <Title level="1" style={{ fontSize: '32px', fontWeight: '900', lineHeight: 1.2, marginBottom: '8px' }}>
-          Твой тотемный зверь
+          {isReturning ? 'С возвращением' : 'Твой тотемный зверь'}
         </Title>
         <Headline level="2" style={{ opacity: 0.6, fontWeight: '400' }}>
-          Узнай, какое животное<br />символизирует твой дух
+          {isReturning
+            ? <>Твой тотем ждал тебя<br />— и у него есть совет</>
+            : <>Узнай, какое животное<br />символизирует твой дух</>}
         </Headline>
       </div>
+
+      {/* Returning user card: last totem + daily tip */}
+      {isReturning && lastAnimal && dailyTip && (
+        <button
+          type="button"
+          onClick={onViewLastResult}
+          className="animate-fadeInUp returning-totem-card"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            width: '100%',
+            maxWidth: '360px',
+            padding: '16px 18px',
+            margin: '12px 0 8px',
+            background: `linear-gradient(135deg, ${lastAnimal.colors[0]}22, ${lastAnimal.colors[1]}22)`,
+            border: `1.5px solid ${lastAnimal.colors[0]}55`,
+            borderRadius: '18px',
+            cursor: 'pointer',
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '42px', lineHeight: 1 }}>{lastAnimal.emoji}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <Text style={{ fontSize: '11px', opacity: 0.55, letterSpacing: '0.8px', textTransform: 'uppercase', display: 'block' }}>
+                Твой тотем
+              </Text>
+              <Text style={{ fontSize: '17px', fontWeight: '800', display: 'block', lineHeight: 1.2 }}>
+                {lastAnimal.name}
+              </Text>
+              {lastResult && (
+                <Text style={{ fontSize: '12px', opacity: 0.55, display: 'block', marginTop: '2px' }}>
+                  {lastResult.rankIcon} {lastResult.rank}
+                </Text>
+              )}
+            </div>
+            <span style={{ opacity: 0.35, fontSize: '18px' }}>›</span>
+          </div>
+
+          <div
+            style={{
+              padding: '10px 12px',
+              borderRadius: '12px',
+              background: 'rgba(0,0,0,0.15)',
+              borderLeft: `3px solid ${lastAnimal.colors[0]}`,
+            }}
+          >
+            <Text style={{ fontSize: '11px', opacity: 0.5, display: 'block', marginBottom: '4px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+              💡 Совет дня
+            </Text>
+            <Text style={{ fontSize: '14px', lineHeight: 1.45, fontStyle: 'italic' }}>
+              {dailyTip}
+            </Text>
+          </div>
+        </button>
+      )}
 
       {/* Stats chips */}
       <div className="start-stats" style={{ marginTop: '24px' }}>
@@ -133,7 +199,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
           borderRadius: '16px',
         }}
       >
-        Узнать своего зверя 🐾
+        {isReturning ? 'Пройти заново 🐾' : 'Узнать своего зверя 🐾'}
       </Button>
 
       {/* Viral hint */}
@@ -145,7 +211,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
           textAlign: 'center',
         }}
       >
-        Потом сможешь сравнить результат с друзьями
+        {isReturning ? 'А вдруг сегодня тотем поменяется?' : 'Потом сможешь сравнить результат с друзьями'}
       </Text>
     </div>
   );

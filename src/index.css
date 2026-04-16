@@ -156,6 +156,27 @@ body {
   transform: scale(0.97);
 }
 
+.quiz-back-btn:hover:not(:disabled) {
+  background: rgba(128, 128, 128, 0.18) !important;
+  transform: translateX(-2px);
+}
+
+.quiz-back-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.returning-totem-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.returning-totem-card:hover {
+  transform: translateY(-2px);
+}
+
+.returning-totem-card:active {
+  transform: scale(0.985);
+}
+
 /* ===== START SCREEN ===== */
 
 .start-screen {
